@@ -64,14 +64,22 @@
 			children = (
 				51BC2504236CD58000C44F39 /* AppDelegate.swift */,
 				51BC2506236CD58000C44F39 /* SceneDelegate.swift */,
-				51BC2508236CD58000C44F39 /* DrawViewController.swift */,
+				51DE163E2373E23200D67FEF /* DrawDraw */,
 				51DE163A2373AFE400D67FEF /* DrawHere.swift */,
-				51DE163C2373B31700D67FEF /* Utils.swift */,
-				51E2344F236F2516009E31EF /* Color.swift */,
 				51BC250A236CD58000C44F39 /* Main.storyboard */,
 				51BC250D236CD58200C44F39 /* Assets.xcassets */,
 				51BC250F236CD58200C44F39 /* LaunchScreen.storyboard */,
 				51BC2512236CD58200C44F39 /* Info.plist */,
+			);
+			path = DrawDraw;
+			sourceTree = "<group>";
+		};
+		51DE163E2373E23200D67FEF /* DrawDraw */ = {
+			isa = PBXGroup;
+			children = (
+				51BC2508236CD58000C44F39 /* DrawViewController.swift */,
+				51DE163C2373B31700D67FEF /* Utils.swift */,
+				51E2344F236F2516009E31EF /* Color.swift */,
 			);
 			path = DrawDraw;
 			sourceTree = "<group>";
