@@ -18,24 +18,12 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="2QL-oR-U85">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UGJ-WI-pgN">
-                                <rect key="frame" x="159" y="809" width="96" height="53"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="34"/>
-                                <state key="normal" title="DRAW">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <connections>
-                                    <action selector="redraw:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vk4-Sx-bij"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="2QL-oR-U85" firstAttribute="centerX" secondItem="UGJ-WI-pgN" secondAttribute="centerX" id="5Wb-OF-Hv0"/>
                             <constraint firstItem="2QL-oR-U85" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="YNN-mb-5q2"/>
                             <constraint firstItem="2QL-oR-U85" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="-44" id="a2p-ul-SV9"/>
                             <constraint firstItem="2QL-oR-U85" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="c5G-r8-qfY"/>
-                            <constraint firstItem="UGJ-WI-pgN" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="fWU-jp-WvD"/>
                             <constraint firstItem="2QL-oR-U85" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="lup-rF-xmq"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>

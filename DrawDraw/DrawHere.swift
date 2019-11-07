@@ -13,11 +13,11 @@ import QuartzCore
 class DrawHere : DrawViewController {
     
     override func setup() {
-        
+        fullScreen()
     }
     
     override func draw() {
-        
+        print("Refresh")
     }
 }
 

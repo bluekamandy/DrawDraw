@@ -23,27 +23,43 @@ class DrawViewController: UIViewController {
         var b:UInt8
     }
     
-    let width = 768
-    let height = 1024
+    var width = 500
+    var height = 500
+    var maxWidth: Int!
+    var maxHeight: Int!
+    var screenFrame: CGRect!
+    var frameRate = 60
     
     var canvas:[PixelData]!
     
-    let backgroundColor = UIColor.gray
-    let strokeColor = UIColor.white
+    let backgroundColorR:UInt8 = 127
+    let backgroundColorG:UInt8 = 127
+    let backgroundColorB:UInt8 = 127
     
+    let backgroundColor = UIColor(red: 127, green: 127, blue: 127)
+    let strokeColor = UIColor.white
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = backgroundColor
+        self.view.backgroundColor = UIColor.black
         imageView.layer.magnificationFilter = CALayerContentsFilter.nearest
+        imageView.contentMode = .topLeft
+        
+        // Create Display Link
+        createDisplayLink(fps: frameRate)
         
         // Setup Pixel Array
-        canvas = [PixelData](repeatElement(PixelData.init(r: 0, g: 0, b: 0), count: width*height))
+        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: width*height))
         imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: width, height: height)
-        
+        screenFrame = self.view.frame
     }
     
+    override func viewDidLayoutSubviews() {
+        maxWidth = Int(screenFrame.width)
+        maxHeight = Int(screenFrame.height)
+        setup()
+    }
     
     open func setup() {
         
@@ -52,6 +68,8 @@ class DrawViewController: UIViewController {
     open func draw() {
         
     }
+    
+    
     
     // MARK: DISPLAY LINK
     // Creating Link to Display for Refreshing 60 fps
@@ -65,18 +83,27 @@ class DrawViewController: UIViewController {
         displaylink.add(to: .current,
                         forMode: .default)
     }
-         
+    
     @objc func step(displaylink: CADisplayLink) {
+        imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: width, height: height)
         draw()
     }
     
-    // MARK: Actions
+    // MARK: Framework Functions
     
-    @IBAction func redraw(_ sender: Any) {
-
+    func size(_ width: Int, _ height: Int) {
+        self.width = width
+        self.height = height
+        
+        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: width*height))
     }
     
-    // Framework Functions
+    func fullScreen() {
+        self.width = maxWidth
+        self.height = maxHeight
+        
+        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: width*height))
+    }
     
     func randomStatic(_ width: Int, _ height: Int) {
         
