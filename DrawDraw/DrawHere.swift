@@ -12,6 +12,9 @@ import QuartzCore
 
 class DrawHere : DrawViewController {
     
+    var lineX: Int!
+    var lineY: Int!
+    
     override func setup() {
         fullScreen()
     }

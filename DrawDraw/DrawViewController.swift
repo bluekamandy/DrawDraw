@@ -12,10 +12,10 @@ import QuartzCore
 
 class DrawViewController: UIViewController {
     
-    // MARK: Outlets
+    // MARK: - OUTLETS
     @IBOutlet weak var imageView: UIImageView!
     
-    // MARK: Instance Variables and Structs
+    // MARK: - PROPERTIES
     public struct PixelData {
         var a:UInt8 = 255
         var r:UInt8
@@ -28,7 +28,7 @@ class DrawViewController: UIViewController {
     var maxWidth: Int!
     var maxHeight: Int!
     var screenFrame: CGRect!
-    var frameRate = 60
+    var frameRate: Int = 60
     
     var canvas:[PixelData]!
     
@@ -39,15 +39,14 @@ class DrawViewController: UIViewController {
     let backgroundColor = UIColor(red: 127, green: 127, blue: 127)
     let strokeColor = UIColor.white
     
+    // MARK: - LAUNCH ORDER
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = UIColor.black
         imageView.layer.magnificationFilter = CALayerContentsFilter.nearest
         imageView.contentMode = .topLeft
-        
-        // Create Display Link
-        createDisplayLink(fps: frameRate)
         
         // Setup Pixel Array
         canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: width*height))
@@ -59,6 +58,9 @@ class DrawViewController: UIViewController {
         maxWidth = Int(screenFrame.width)
         maxHeight = Int(screenFrame.height)
         setup()
+        
+        // Create Display Link
+        createDisplayLink(fps: frameRate)
     }
     
     open func setup() {
@@ -69,9 +71,7 @@ class DrawViewController: UIViewController {
         
     }
     
-    
-    
-    // MARK: DISPLAY LINK
+    // MARK: - DISPLAY LINK
     // Creating Link to Display for Refreshing 60 fps
     
     func createDisplayLink(fps: Int) {
@@ -89,7 +89,7 @@ class DrawViewController: UIViewController {
         draw()
     }
     
-    // MARK: Framework Functions
+    // MARK: - FRAMEWORK FUNCTIONS
     
     func size(_ width: Int, _ height: Int) {
         self.width = width
@@ -160,18 +160,36 @@ class DrawViewController: UIViewController {
         canvas[pixelNumber] = PixelData(r: 255, g: 255, b: 255)
     }
     
-    func line1(x1: Int, y1: Int, x2:Int, y2:Int) {
+    
+    
+    /**
+     Simple Line Function
+     
+     Citation:
+     
+     Title: Graphics & Visualization: Principles & Algorithms
+     Author: T. Theoharis, G. Papaioannou, N. Platis, N. Patrikalakis
+     Date: 2008
+     Code version: N/A
+     Availability: http://graphics.cs.aueb.gr/cgvizbook/index.html
+
+     - parameters:
+        - x1: Starting x position
+        - y1: Starting y position
+        - x2: Ending x position
+        - y2: Ending y position
+     */
+    
+    func line(x1: Int, y1: Int, x2:Int, y2:Int) {
         var s: Float
         var x,y: Int
         s = Float(y2-y1) / Float(x2-x1)
-        print("\(s) is the slope.")
         x = x1
         y = y1
         while x <= x2 {
             pixel(x,y)
             x = x+1
             y = y1 + Int(round(s * Float(x-x1)))
-            print("(\(x),\(y))")
         }
         
     }
