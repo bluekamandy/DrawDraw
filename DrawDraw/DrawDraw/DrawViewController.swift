@@ -23,10 +23,15 @@ class DrawViewController: UIViewController {
         var b:UInt8
     }
     
-    var width = 500
-    var height = 500
-    var maxWidth: Int!
-    var maxHeight: Int!
+    public struct Vector {
+        var x: CGFloat
+        var y: CGFloat
+    }
+    
+    var width: CGFloat = 500
+    var height: CGFloat = 500
+    var maxWidth: CGFloat!
+    var maxHeight: CGFloat!
     var screenFrame: CGRect!
     var frameRate: Int = 60
     
@@ -41,6 +46,10 @@ class DrawViewController: UIViewController {
     
     // MARK: - LAUNCH ORDER
     
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -49,14 +58,14 @@ class DrawViewController: UIViewController {
         imageView.contentMode = .topLeft
         
         // Setup Pixel Array
-        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: width*height))
-        imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: width, height: height)
+        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: Int(width*height)))
+        imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: Int(width), height: Int(height))
         screenFrame = self.view.frame
     }
     
     override func viewDidLayoutSubviews() {
-        maxWidth = Int(screenFrame.width)
-        maxHeight = Int(screenFrame.height)
+        maxWidth = screenFrame.width
+        maxHeight = screenFrame.height
         setup()
         
         // Create Display Link
@@ -85,24 +94,24 @@ class DrawViewController: UIViewController {
     }
     
     @objc func step(displaylink: CADisplayLink) {
-        imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: width, height: height)
+        imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: Int(width), height: Int(height))
         draw()
     }
     
     // MARK: - FRAMEWORK FUNCTIONS
     
-    func size(_ width: Int, _ height: Int) {
+    func size(_ width: CGFloat, _ height: CGFloat) {
         self.width = width
         self.height = height
         
-        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: width*height))
+        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: Int(width*height)))
     }
     
     func fullScreen() {
         self.width = maxWidth
         self.height = maxHeight
         
-        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: width*height))
+        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: Int(width*height)))
     }
     
     func randomStatic(_ width: Int, _ height: Int) {
@@ -155,8 +164,8 @@ class DrawViewController: UIViewController {
     }
     
     
-    func pixel(_ x: Int, _ y: Int) {
-        var pixelNumber = x + width * y
+    func pixel(_ x: CGFloat, _ y: CGFloat) {
+        var pixelNumber = Int(x + CGFloat(width) * y)
         canvas[pixelNumber] = PixelData(r: 255, g: 255, b: 255)
     }
     
@@ -165,13 +174,17 @@ class DrawViewController: UIViewController {
     /**
      Simple Line Function
      
-     Citation:
+     **Citation**
      
-     Title: Graphics & Visualization: Principles & Algorithms
-     Author: T. Theoharis, G. Papaioannou, N. Platis, N. Patrikalakis
-     Date: 2008
-     Code version: N/A
-     Availability: http://graphics.cs.aueb.gr/cgvizbook/index.html
+     **Title:** Graphics & Visualization: Principles & Algorithms
+     
+     **Author:** T. Theoharis, G. Papaioannou, N. Platis, N. Patrikalakis
+     
+     **Date:** 2008
+     
+     **Code version:** N/A
+     
+     **Availability:** http://graphics.cs.aueb.gr/cgvizbook/index.html
 
      - parameters:
         - x1: Starting x position
@@ -180,16 +193,16 @@ class DrawViewController: UIViewController {
         - y2: Ending y position
      */
     
-    func line(x1: Int, y1: Int, x2:Int, y2:Int) {
-        var s: Float
-        var x,y: Int
-        s = Float(y2-y1) / Float(x2-x1)
+    func line(_ x1: CGFloat, _ y1: CGFloat, _ x2:CGFloat, _ y2:CGFloat) {
+        var s: CGFloat
+        var x,y: CGFloat
+        s = (y2-y1) / (x2-x1)
         x = x1
         y = y1
         while x <= x2 {
             pixel(x,y)
             x = x+1
-            y = y1 + Int(round(s * Float(x-x1)))
+            y = y1 + round(s * (x-x1))
         }
         
     }

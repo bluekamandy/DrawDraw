@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreGraphics
 
 // MARK: MAP FUNCTION
 
@@ -17,7 +18,7 @@ import Foundation
 /// Use this if you need to modify the behavior of an input variable and stretch it
 /// or shrink its values proportionally.
 /// ````
-/// let remapped = map(valueToModify: input, low1: 0, high1: 10, low2: 100, high2
+/// let remapped = map(valueToModify: input, low1: 0, high1: 10, low2: 100, high2: 100)
 /// ````
 /// - parameter valueToModify: The input variable you would like to remap.
 /// - parameter low1: The original low for the input variable's range.
@@ -31,3 +32,29 @@ func map(valueToModify: Double, low1: Double, high1: Double, low2: Double, high2
     return result
 }
 
+// MARK: RANDOM INTEGER FUNCTION
+
+/// This is a basic random integer function.
+/// ```
+/// let randomNumber = random(50)
+/// ```
+/// - parameter upperBound: upper bound of random integer values
+
+
+func random(_ upperBound:Int) -> Int {
+    var result = Int.random(in: 0..<upperBound)
+    return result
+}
+
+// MARK: RANDOM CGFLOAT FUNCTION
+
+/// This is a basic random floating point function.
+/// ```
+/// let randomNumber = random(50.0)
+/// ```
+/// - parameter upperBound: upper bound of random double values
+
+func random(_ upperBound:CGFloat) -> CGFloat {
+    var result = CGFloat.random(in: 0..<upperBound)
+    return result
+}
