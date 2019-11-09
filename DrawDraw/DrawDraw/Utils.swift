@@ -27,7 +27,12 @@ import CoreGraphics
 /// - parameter high2: The new high to output for the remapped range.
 /// - returns: A `Double` remapped to the new scale.
 
-func map(valueToModify: Double, low1: Double, high1: Double, low2: Double, high2: Double) -> Double {
+func map(_ valueToModify: Double, _ low1: Double, _ high1: Double, _ low2: Double, _ high2: Double) -> Double {
+    let result = (low2 + (valueToModify - low1)) * (high2 - low2) / (high1 - low1)
+    return result
+}
+
+func map(_ valueToModify: CGFloat, _ low1: CGFloat, _ high1: CGFloat, _ low2: CGFloat, _ high2: CGFloat) -> CGFloat {
     let result = (low2 + (valueToModify - low1)) * (high2 - low2) / (high1 - low1)
     return result
 }
@@ -48,6 +53,24 @@ func random(_ max:Int) -> Int {
 
 func random(_ min: Int, _ max:Int) -> Int {
     var result = Int.random(in: min...max)
+    return result
+}
+
+// MARK: RANDOM UNSIGNED 8-BIT INTEGER FUNCTION
+
+/// This is a basic random unsigned 8-bit integer function.
+/// ```
+/// let randomNumber = random(50)
+/// ```
+/// - parameter max: max random integer value
+
+func random(_ max:UInt8) -> UInt8 {
+    var result = UInt8.random(in: 0...max)
+    return result
+}
+
+func random(_ min: UInt8, _ max:UInt8) -> UInt8 {
+    var result = UInt8.random(in: min...max)
     return result
 }
 
