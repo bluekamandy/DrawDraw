@@ -12,40 +12,34 @@ import QuartzCore
 
 class DrawHere : DrawViewController {
     
-    var lineX1: CGFloat!
-    var lineY1: CGFloat!
-    var lineX2: CGFloat!
-    var lineY2: CGFloat!
+    var x1: CGFloat!
+    var y1: CGFloat!
+    var x2: CGFloat!
+    var y2: CGFloat!
     
-    var vector1: Vector!
-    var vector2: Vector!
-    
-    var speed1: CGFloat!
-    var speed2: CGFloat!
+    var speed: [CGFloat] = []
     
     override func setup() {
         fullScreen()
+        backgroundColor = UIColor.darkGray
+        x1 = random(width)
+        y1 = random(height)
+        x2 = random(width)
+        y2 = random(height)
         
-        speed1 = random(5.0)
-        speed2 = random(5.0)
-        
-        vector1 = Vector(x: 1.0, y: 1.0)
-        
-        vector2 = Vector(x: 1.0, y: 1.0)
-        
-        lineX1 = random(width)
-        lineY1 = random(height)
-        
-        lineX2 = random(width)
-        lineY2 = random(height)
+        for _ in 0..<4 {
+            speed.append(random(1.0))
+        }
+
     }
     
     override func draw() {
-        line(lineX1, lineY1, lineX2, lineY2)
-        lineX1 = lineX1 + speed1
-        lineY1 = lineY1 + speed1
-        lineX2 = lineX2 + speed2
-        lineX2 = lineY2 + speed2
+        
+        line2(x1, y1, x2, y2)
+        x1 = x1 + speed[0]
+        y1 = y1 + speed[1]
+        x2 = x2 + speed[2]
+        y2 = y2 + speed[3]
     }
 }
 

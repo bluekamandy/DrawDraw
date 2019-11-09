@@ -37,11 +37,11 @@ class DrawViewController: UIViewController {
     
     var canvas:[PixelData]!
     
-    let backgroundColorR:UInt8 = 127
-    let backgroundColorG:UInt8 = 127
-    let backgroundColorB:UInt8 = 127
+    var backgroundColorR:UInt8 = 127
+    var backgroundColorG:UInt8 = 127
+    var backgroundColorB:UInt8 = 127
     
-    let backgroundColor = UIColor(red: 127, green: 127, blue: 127)
+    var backgroundColor = UIColor(red: 127, green: 127, blue: 127)
     let strokeColor = UIColor.white
     
     // MARK: - LAUNCH ORDER
@@ -165,7 +165,11 @@ class DrawViewController: UIViewController {
     
     
     func pixel(_ x: CGFloat, _ y: CGFloat) {
-        var pixelNumber = Int(x + CGFloat(width) * y)
+        // Implementing a "wrap-around" toroidal 2d coordinate space
+        var xt = x.truncatingRemainder(dividingBy: width-1)
+        var yt = y.truncatingRemainder(dividingBy: height-1)
+        var pixelNumber = Int(xt + width * yt)
+        print(pixelNumber)
         canvas[pixelNumber] = PixelData(r: 255, g: 255, b: 255)
     }
     
@@ -185,12 +189,12 @@ class DrawViewController: UIViewController {
      **Code version:** N/A
      
      **Availability:** http://graphics.cs.aueb.gr/cgvizbook/index.html
-
+     
      - parameters:
-        - x1: Starting x position
-        - y1: Starting y position
-        - x2: Ending x position
-        - y2: Ending y position
+     - x1: Starting x position
+     - y1: Starting y position
+     - x2: Ending x position
+     - y2: Ending y position
      */
     
     func line(_ x1: CGFloat, _ y1: CGFloat, _ x2:CGFloat, _ y2:CGFloat) {
@@ -207,6 +211,22 @@ class DrawViewController: UIViewController {
         
     }
     
+    func line2(_ x1: CGFloat, _ y1: CGFloat, _ x2: CGFloat, _ y2: CGFloat) {
+        var s,e: CGFloat
+        var x,y: CGFloat
+        e = 0
+        s = (y2-y1) / (x2-x1)
+        (x,y) = (x1,y1)
+        while (x <= x2) {
+            pixel(x,y)
+            x = x + 1
+            e = e + s
+            if (e >= 1/2) {
+                y = y + 1
+                e = e - 1
+            }
+        }
+    }
 }
 
 

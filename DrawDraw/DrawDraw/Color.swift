@@ -11,7 +11,16 @@ import CoreGraphics
 import UIKit
     
 public extension UIColor {
-    convenience init(red: Int, green: Int, blue: Int) {
+    
+    // MARK: COLOR CONVENIENCE INITIALIZER FOR INTEGERS
+
+    /// This is an extension of the UIColor initializer to accept standard 8-bit integers as parameters
+    /// ```
+    /// let randomNumber = random(50.0)
+    /// ```
+    /// - parameter upperBound: upper bound of random double values
+
+    convenience init(red: UInt8, green: UInt8, blue: UInt8) {
         let newRed = CGFloat(red)/255
         let newGreen = CGFloat(green)/255
         let newBlue = CGFloat(blue)/255
