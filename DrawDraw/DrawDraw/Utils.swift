@@ -38,11 +38,16 @@ func map(valueToModify: Double, low1: Double, high1: Double, low2: Double, high2
 /// ```
 /// let randomNumber = random(50)
 /// ```
-/// - parameter upperBound: upper bound of random integer values
+/// - parameter max: max random integer value
 
 
-func random(_ upperBound:Int) -> Int {
-    var result = Int.random(in: 0..<upperBound)
+func random(_ max:Int) -> Int {
+    var result = Int.random(in: 0...max)
+    return result
+}
+
+func random(_ min: Int, _ max:Int) -> Int {
+    var result = Int.random(in: min...max)
     return result
 }
 
@@ -54,7 +59,12 @@ func random(_ upperBound:Int) -> Int {
 /// ```
 /// - parameter upperBound: upper bound of random double values
 
-func random(_ upperBound:CGFloat) -> CGFloat {
-    var result = CGFloat.random(in: 0..<upperBound)
+func random(_ max:CGFloat) -> CGFloat {
+    var result = CGFloat.random(in: 0...max)
+    return result
+}
+
+func random(_ min: CGFloat, _ max:CGFloat) -> CGFloat {
+    var result = CGFloat.random(in: min...max)
     return result
 }

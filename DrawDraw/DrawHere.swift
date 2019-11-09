@@ -21,14 +21,15 @@ class DrawHere : DrawViewController {
     
     override func setup() {
         fullScreen()
-        backgroundColor = UIColor.darkGray
-        x1 = random(width)
-        y1 = random(height)
-        x2 = random(width)
-        y2 = random(height)
+        backgroundColor = PixelData(r: 0, g: 0, b: 0)
+        x1 = random(width/4)
+        y1 = random(height/4)
+        x2 = random(width/4,width)
+        y2 = random(height/4,height)
         
-        for _ in 0..<4 {
-            speed.append(random(1.0))
+        for i in 0..<4 {
+            speed.append(random(-5.0, 5.0))
+            print(speed[i])
         }
 
     }
@@ -40,6 +41,13 @@ class DrawHere : DrawViewController {
         y1 = y1 + speed[1]
         x2 = x2 + speed[2]
         y2 = y2 + speed[3]
+        
+        stroke.r = (stroke.r + UInt8(random(5))) % 250
+        //print("Red: \(stroke.r)")
+        stroke.g = (stroke.g + UInt8(random(5))) % 250
+        //print("Green: \(stroke.g)")
+        stroke.b = (stroke.b + UInt8(random(5))) % 250
+        //print("Blue: \(stroke.b)")
     }
 }
 

@@ -33,7 +33,7 @@ class DrawViewController: UIViewController {
     var maxWidth: CGFloat!
     var maxHeight: CGFloat!
     var screenFrame: CGRect!
-    var frameRate: Int = 60
+    var frameRate: Int = 120
     
     var canvas:[PixelData]!
     
@@ -41,8 +41,8 @@ class DrawViewController: UIViewController {
     var backgroundColorG:UInt8 = 127
     var backgroundColorB:UInt8 = 127
     
-    var backgroundColor = UIColor(red: 127, green: 127, blue: 127)
-    let strokeColor = UIColor.white
+    var backgroundColor = PixelData(r: 127, g: 127, b: 127)
+    var stroke: PixelData!
     
     // MARK: - LAUNCH ORDER
     
@@ -57,15 +57,21 @@ class DrawViewController: UIViewController {
         imageView.layer.magnificationFilter = CALayerContentsFilter.nearest
         imageView.contentMode = .topLeft
         
-        // Setup Pixel Array
-        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: Int(width*height)))
-        imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: Int(width), height: Int(height))
-        screenFrame = self.view.frame
+        
     }
     
     override func viewDidLayoutSubviews() {
+        
+        // Setup Pixel Array
+        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColor.r, g: backgroundColor.g, b: backgroundColor.b), count: Int(width*height)))
+        imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: Int(width), height: Int(height))
+        screenFrame = self.view.frame
+        stroke = PixelData(r: 0, g: 0, b: 0)
+        
         maxWidth = screenFrame.width
         maxHeight = screenFrame.height
+
+        
         setup()
         
         // Create Display Link
@@ -79,6 +85,14 @@ class DrawViewController: UIViewController {
     open func draw() {
         
     }
+    
+    // MARK: - TOUCHES
+    
+    @IBAction func screenTapped(_ sender: Any) {
+        viewDidLayoutSubviews()
+        print("tap")
+    }
+    
     
     // MARK: - DISPLAY LINK
     // Creating Link to Display for Refreshing 60 fps
@@ -104,14 +118,14 @@ class DrawViewController: UIViewController {
         self.width = width
         self.height = height
         
-        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: Int(width*height)))
+        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColor.r, g: backgroundColor.g, b: backgroundColor.b), count: Int(width*height)))
     }
     
     func fullScreen() {
         self.width = maxWidth
         self.height = maxHeight
         
-        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColorR, g: backgroundColorG, b: backgroundColorR), count: Int(width*height)))
+        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColor.r, g: backgroundColor.g, b: backgroundColor.b), count: Int(width*height)))
     }
     
     func randomStatic(_ width: Int, _ height: Int) {
@@ -164,13 +178,13 @@ class DrawViewController: UIViewController {
     }
     
     
-    func pixel(_ x: CGFloat, _ y: CGFloat) {
+    func pixel(_ x: CGFloat, _ y: CGFloat, _ color: PixelData) {
         // Implementing a "wrap-around" toroidal 2d coordinate space
-        var xt = x.truncatingRemainder(dividingBy: width-1)
-        var yt = y.truncatingRemainder(dividingBy: height-1)
+        var xt = abs(x.truncatingRemainder(dividingBy: width-1))
+        var yt = abs(y.truncatingRemainder(dividingBy: height-1))
         var pixelNumber = Int(xt + width * yt)
-        print(pixelNumber)
-        canvas[pixelNumber] = PixelData(r: 255, g: 255, b: 255)
+        //print(pixelNumber)
+        canvas[pixelNumber] = PixelData(r: color.r, g: color.g, b: color.b)
     }
     
     
@@ -204,7 +218,7 @@ class DrawViewController: UIViewController {
         x = x1
         y = y1
         while x <= x2 {
-            pixel(x,y)
+            pixel(x,y, stroke)
             x = x+1
             y = y1 + round(s * (x-x1))
         }
@@ -218,7 +232,7 @@ class DrawViewController: UIViewController {
         s = (y2-y1) / (x2-x1)
         (x,y) = (x1,y1)
         while (x <= x2) {
-            pixel(x,y)
+            pixel(x,y, stroke)
             x = x + 1
             e = e + s
             if (e >= 1/2) {
