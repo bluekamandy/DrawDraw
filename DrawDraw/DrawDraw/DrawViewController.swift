@@ -18,15 +18,18 @@ class DrawViewController: UIViewController {
     
     // MARK: - PROPERTIES
     public struct Color {
-        let r, g, b, a :UInt8
-
+        var r:UInt8 = 255
+        var g:UInt8 = 255
+        var b:UInt8 = 255
+        var a :UInt8 = 255
+        
         init(_ r: UInt8, _ g: UInt8, _ b: UInt8, _ a: UInt8) {
             self.r = r
             self.g = g
             self.b = b
             self.a = a
         }
-
+        
         init(_ r: UInt8, _ g: UInt8, _ b: UInt8) {
             self.r = r
             self.g = g
@@ -40,14 +43,14 @@ class DrawViewController: UIViewController {
             self.b = w
             self.a = 255
         }
-     }
+    }
     
-//    public struct Color {
-//        var a:UInt8 = 255
-//        var r:UInt8
-//        var g:UInt8
-//        var b:UInt8
-//    }
+    //    public struct Color {
+    //        var a:UInt8 = 255
+    //        var r:UInt8
+    //        var g:UInt8
+    //        var b:UInt8
+    //    }
     
     public struct Vector {
         var x: CGFloat
@@ -56,7 +59,7 @@ class DrawViewController: UIViewController {
     
     var width: Int = 500
     var height: Int = 500
-
+    
     var maxWidth: Int!
     var maxHeight: Int!
     
@@ -68,10 +71,10 @@ class DrawViewController: UIViewController {
     
     var backgroundColor = Color(127) {
         didSet {
-            background(backgroundColor)
+            clearCanvas(backgroundColor)
         }
     }
-
+    
     var stroke: Color!
     
     var initialCenter: CGPoint!
@@ -91,28 +94,28 @@ class DrawViewController: UIViewController {
         imageView.layer.magnificationFilter = CALayerContentsFilter.nearest
         imageView.contentMode = .topLeft
         
-        stroke = Color(255, 255, 255)
+        stroke = Color(255)
     }
     
     override func viewDidLayoutSubviews() {
         
         // Setup Pixel Array
-        canvas = [Color](repeatElement(Color.init(backgroundColor.r, backgroundColor.g, backgroundColor.b), count: Int(width*height)))
+        canvas = [Color](repeatElement(backgroundColor, count: Int(width*height)))
         imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: width, height: height)
         screenFrame = self.view.frame
         
         maxWidth = Int(screenFrame.width)
         maxHeight = Int(screenFrame.height)
-        print("maxWidth = \(maxWidth)")
-        print("maxHeight = \(maxHeight)")
+        
         screenRatio = CGFloat(maxHeight)/CGFloat(maxWidth)
-        print("maxHeight/maxWidth = \(CGFloat(maxHeight)/CGFloat(maxWidth))")
         
         setup()
         
         // Create Display Link
         createDisplayLink(fps: frameRate)
     }
+    
+    // MARK: - BASIC SETUP AND DRAW
     
     open func setup() {
         
@@ -126,7 +129,7 @@ class DrawViewController: UIViewController {
     
     @IBAction func screenTapped(_ sender: Any) {
         viewDidLayoutSubviews()
-        print("tap")
+        //        print("tap")
     }
     
     @IBAction func handlePan(_ recognizer: UIPanGestureRecognizer) {
@@ -139,13 +142,13 @@ class DrawViewController: UIViewController {
                     view.frame.width,
                     0,
                     CGFloat(width)))
-            print("x is \(touchX)")
+            //            print("x is \(touchX)")
             touchY = Int(
                 map(recognizer.location(in: view).y,
                     0,
                     view.frame.height,CGFloat(height) - CGFloat(width)*screenRatio,
                     CGFloat(height)))
-            print("y is \(touchY)")
+            //            print("y is \(touchY)")
         }
         
     }
@@ -168,27 +171,27 @@ class DrawViewController: UIViewController {
         draw()
     }
     
-    // MARK: - FRAMEWORK FUNCTIONS
+    // MARK: - FRAMEWORK FUNCTIONS - BASIC SETUP FUNCTIONS
     
     func size(_ width: Int, _ height: Int) {
         self.width = width
         self.height = height
         
-        canvas = [Color](repeatElement(Color.init(backgroundColor.r, backgroundColor.g, backgroundColor.b), count: Int(width*height)))
+        clearCanvas(backgroundColor)
     }
     
     func fullScreen() {
         self.width = maxWidth
         self.height = maxHeight
         
-        canvas = [Color](repeatElement(Color.init(backgroundColor.r, backgroundColor.g, backgroundColor.b), count: Int(width*height)))
+        clearCanvas(backgroundColor)
     }
     
     func scalePixels() {
         imageView.contentMode = .scaleAspectFit
     }
     
-    func background(_ color: Color) {
+    func clearCanvas(_ color: Color) {
         canvas = Array(repeating: color, count: width*height)
     }
     
@@ -213,7 +216,7 @@ class DrawViewController: UIViewController {
         guard pixels.count == width * height else { return nil }
         
         let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
         let bitsPerComponent = 8
         let bitsPerPixel = 32
         
@@ -241,12 +244,9 @@ class DrawViewController: UIViewController {
         return UIImage(cgImage: cgim)
     }
     
+    // MARK: - FRAMEWORK FUNCTIONS - SHAPE PRIMITIVES
     
-    func pixel(_ x: Int, _ y: Int, _ color: Color) {
-        // Implementing a "wrap-around" toroidal 2d coordinate space
-        //        var xt = abs(x.truncatingRemainder(dividingBy: width-1))
-        //        var yt = abs(y.truncatingRemainder(dividingBy: height-1))\
-        
+    func pixel(_ x: Int, _ y: Int) {
         var xt: Int!
         var yt: Int!
         if x > 0 && y > 0 && x < width && y < height{
@@ -256,10 +256,10 @@ class DrawViewController: UIViewController {
             return
         }
         var pixelNumber = xt + width * yt
-        canvas[pixelNumber] = Color(color.r, color.g, color.b)
+        canvas[pixelNumber] = stroke
     }
     
-     
+    
     
     func line(_ x1: Int,_ y1: Int,_ x2: Int,_ y2: Int) {
         var dx = abs(x2-x1), sx:Int = x1<x2 ? 1 : -1
@@ -270,7 +270,7 @@ class DrawViewController: UIViewController {
         var y = y1
         
         while true {
-            pixel(x, y, stroke)
+            pixel(x, y)
             if (x == x2 && y == y2) { break }
             e2 = 2 * err
             if (e2 >= dy) { err += dy; x += sx }

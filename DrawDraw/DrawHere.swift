@@ -19,24 +19,29 @@ class DrawHere : DrawViewController {
     var randomIncrementY: Int!
     
     override func setup() {
-        fullScreen()
-        backgroundColor = Color(127)
-
+        size(500,500)
+        
         xPos = width/2
         yPos = height/2
-        
     }
     
     override func draw() {
-        backgroundColor = Color(0)
-        line(xPos, yPos, 0, 0)
-        line(0, height, xPos, yPos)
-        line(xPos, yPos, width, height)
-        line(width, 0, xPos, yPos)
-        xPos = xPos > width ? 0 : xPos + random(-10,10)
-        yPos = yPos > height ? 0 : yPos + random(-10,10)
+        clearCanvas(Color(127))
+        stroke = Color(random(255), random(255), random(255))
+        largeRect(random(width), random(height), 25)
+        xPos = xPos > width || xPos < 0 ? width / 2 : xPos + random(-1,1)
+        yPos = yPos > height || yPos < 0 ? height / 2 : yPos + random(-1,1)
         
-
+        
+    }
+    
+    func largeRect(_ x: Int, _ y: Int, _ squareSize: Int){
+        
+        for yp in 0..<squareSize {
+            for xp in 0..<squareSize {
+                pixel(xp + x, yp + y)
+            }
+        }
     }
 }
 
