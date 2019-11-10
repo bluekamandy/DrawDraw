@@ -12,43 +12,31 @@ import QuartzCore
 
 class DrawHere : DrawViewController {
     
-    var colorIncrement: [UInt8] = []
+    var xPos: Int!
+    var yPos: Int!
+    
+    var randomIncrementX: Int!
+    var randomIncrementY: Int!
     
     override func setup() {
-        //size(300,400)
         fullScreen()
-        scalePixels()
-        backgroundColor = PixelData(r: 0, g: 0, b: 0)
-        touchX = width/2
-        touchY = height/2
-        
-        for i in 0..<3 {
-            colorIncrement.append(random(1,8))
-        }
+        backgroundColor = Color(127)
+
+        xPos = width/2
+        yPos = height/2
         
     }
     
     override func draw() {
+        backgroundColor = Color(0)
+        line(xPos, yPos, 0, 0)
+        line(0, height, xPos, yPos)
+        line(xPos, yPos, width, height)
+        line(width, 0, xPos, yPos)
+        xPos = xPos > width ? 0 : xPos + random(-10,10)
+        yPos = yPos > height ? 0 : yPos + random(-10,10)
         
-        line(width/2, height/2, touchX, touchY)
-        
-        if stroke.r < 255 - colorIncrement[0] {
-            stroke.r += colorIncrement[0]
-        } else {
-            stroke.r = 0
-        }
-        
-        if stroke.g < 255 - colorIncrement[1] {
-            stroke.g += colorIncrement[1]
-        } else {
-            stroke.g = 0
-        }
-        
-        if stroke.b < 255 - colorIncrement[2] {
-            stroke.b += colorIncrement[2]
-        } else {
-            stroke.b = 0
-        }
+
     }
 }
 

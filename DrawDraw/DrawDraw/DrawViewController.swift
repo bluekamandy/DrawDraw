@@ -17,38 +17,66 @@ class DrawViewController: UIViewController {
     @IBOutlet var pan: UIPanGestureRecognizer!
     
     // MARK: - PROPERTIES
-    public struct PixelData {
-        var a:UInt8 = 255
-        var r:UInt8
-        var g:UInt8
-        var b:UInt8
-    }
+    public struct Color {
+        let r, g, b, a :UInt8
+
+        init(_ r: UInt8, _ g: UInt8, _ b: UInt8, _ a: UInt8) {
+            self.r = r
+            self.g = g
+            self.b = b
+            self.a = a
+        }
+
+        init(_ r: UInt8, _ g: UInt8, _ b: UInt8) {
+            self.r = r
+            self.g = g
+            self.b = b
+            self.a = 255
+        }
+        
+        init(_ w: UInt8) {
+            self.r = w
+            self.g = w
+            self.b = w
+            self.a = 255
+        }
+     }
+    
+//    public struct Color {
+//        var a:UInt8 = 255
+//        var r:UInt8
+//        var g:UInt8
+//        var b:UInt8
+//    }
     
     public struct Vector {
         var x: CGFloat
         var y: CGFloat
     }
     
-    var width: CGFloat = 500
-    var height: CGFloat = 500
-    var maxWidth: CGFloat!
-    var maxHeight: CGFloat!
+    var width: Int = 500
+    var height: Int = 500
+
+    var maxWidth: Int!
+    var maxHeight: Int!
+    
     var screenRatio: CGFloat!
     var screenFrame: CGRect!
-    var frameRate: Int = 120
+    var frameRate: Int = 60
     
-    var canvas:[PixelData]!
+    var canvas:[Color]!
     
-    var backgroundColorR:UInt8 = 127
-    var backgroundColorG:UInt8 = 127
-    var backgroundColorB:UInt8 = 127
-    
-    var backgroundColor = PixelData(r: 127, g: 127, b: 127)
-    var stroke: PixelData!
+    var backgroundColor = Color(127) {
+        didSet {
+            background(backgroundColor)
+        }
+    }
+
+    var stroke: Color!
     
     var initialCenter: CGPoint!
-    var touchX: CGFloat = 0.0
-    var touchY: CGFloat = 0.0
+    var touchX: Int = 0
+    var touchY: Int = 0
     
     // MARK: - LAUNCH ORDER
     
@@ -63,24 +91,22 @@ class DrawViewController: UIViewController {
         imageView.layer.magnificationFilter = CALayerContentsFilter.nearest
         imageView.contentMode = .topLeft
         
-        
+        stroke = Color(255, 255, 255)
     }
     
     override func viewDidLayoutSubviews() {
         
         // Setup Pixel Array
-        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColor.r, g: backgroundColor.g, b: backgroundColor.b), count: Int(width*height)))
-        imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: Int(width), height: Int(height))
+        canvas = [Color](repeatElement(Color.init(backgroundColor.r, backgroundColor.g, backgroundColor.b), count: Int(width*height)))
+        imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: width, height: height)
         screenFrame = self.view.frame
-        stroke = PixelData(r: 0, g: 0, b: 0)
         
-        maxWidth = screenFrame.width
-        maxHeight = screenFrame.height
+        maxWidth = Int(screenFrame.width)
+        maxHeight = Int(screenFrame.height)
         print("maxWidth = \(maxWidth)")
         print("maxHeight = \(maxHeight)")
-        screenRatio = maxHeight/maxWidth
-        print("maxHeight/maxWidth = \(maxHeight/maxWidth)")
-        
+        screenRatio = CGFloat(maxHeight)/CGFloat(maxWidth)
+        print("maxHeight/maxWidth = \(CGFloat(maxHeight)/CGFloat(maxWidth))")
         
         setup()
         
@@ -107,9 +133,18 @@ class DrawViewController: UIViewController {
         guard pan.view != nil else {return}
         
         if pan.state == .began || pan.state == .changed || pan.state == .ended {
-            touchX = map(recognizer.location(in: view).x, 0, view.frame.width, 0, width)
+            touchX = Int(
+                map(recognizer.location(in: view).x,
+                    0,
+                    view.frame.width,
+                    0,
+                    CGFloat(width)))
             print("x is \(touchX)")
-            touchY = map(recognizer.location(in: view).y,0,view.frame.height,height - width*screenRatio,height)
+            touchY = Int(
+                map(recognizer.location(in: view).y,
+                    0,
+                    view.frame.height,CGFloat(height) - CGFloat(width)*screenRatio,
+                    CGFloat(height)))
             print("y is \(touchY)")
         }
         
@@ -135,41 +170,45 @@ class DrawViewController: UIViewController {
     
     // MARK: - FRAMEWORK FUNCTIONS
     
-    func size(_ width: CGFloat, _ height: CGFloat) {
+    func size(_ width: Int, _ height: Int) {
         self.width = width
         self.height = height
         
-        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColor.r, g: backgroundColor.g, b: backgroundColor.b), count: Int(width*height)))
+        canvas = [Color](repeatElement(Color.init(backgroundColor.r, backgroundColor.g, backgroundColor.b), count: Int(width*height)))
     }
     
     func fullScreen() {
         self.width = maxWidth
         self.height = maxHeight
         
-        canvas = [PixelData](repeatElement(PixelData.init(r: backgroundColor.r, g: backgroundColor.g, b: backgroundColor.b), count: Int(width*height)))
+        canvas = [Color](repeatElement(Color.init(backgroundColor.r, backgroundColor.g, backgroundColor.b), count: Int(width*height)))
     }
     
     func scalePixels() {
         imageView.contentMode = .scaleAspectFit
     }
     
+    func background(_ color: Color) {
+        canvas = Array(repeating: color, count: width*height)
+    }
+    
     func randomStatic(_ width: Int, _ height: Int) {
         
-        var data:[PixelData] = []
+        var data:[Color] = []
         
         for row in 0..<height {
             for column in 0..<width {
-                data.append(PixelData.init(
-                    r: UInt8.random(in: 0...255),
-                    g: UInt8.random(in: 0...255),
-                    b: UInt8.random(in: 0...255)))
+                data.append(Color.init(
+                    UInt8.random(in: 0...255),
+                    UInt8.random(in: 0...255),
+                    UInt8.random(in: 0...255)))
             }
         }
         
         canvas = data
     }
     
-    func imageFromARGB32Bitmap(pixels: [PixelData], width: Int, height: Int) -> UIImage? {
+    func imageFromARGB32Bitmap(pixels: [Color], width: Int, height: Int) -> UIImage? {
         guard width > 0 && height > 0 else { return nil }
         guard pixels.count == width * height else { return nil }
         
@@ -180,7 +219,7 @@ class DrawViewController: UIViewController {
         
         var data = pixels // Copy to mutable []
         guard let providerRef = CGDataProvider(data: NSData(bytes: &data,
-                                                            length: data.count * MemoryLayout<PixelData>.size)
+                                                            length: data.count * MemoryLayout<Color>.size)
             )
             else { return nil }
         
@@ -189,7 +228,7 @@ class DrawViewController: UIViewController {
             height: height,
             bitsPerComponent: bitsPerComponent,
             bitsPerPixel: bitsPerPixel,
-            bytesPerRow: width * MemoryLayout<PixelData>.size,
+            bytesPerRow: width * MemoryLayout<Color>.size,
             space: rgbColorSpace,
             bitmapInfo: bitmapInfo,
             provider: providerRef,
@@ -203,110 +242,41 @@ class DrawViewController: UIViewController {
     }
     
     
-    func pixel(_ x: CGFloat, _ y: CGFloat, _ color: PixelData) {
+    func pixel(_ x: Int, _ y: Int, _ color: Color) {
         // Implementing a "wrap-around" toroidal 2d coordinate space
         //        var xt = abs(x.truncatingRemainder(dividingBy: width-1))
         //        var yt = abs(y.truncatingRemainder(dividingBy: height-1))\
         
-        var xt: CGFloat!
-        var yt: CGFloat!
+        var xt: Int!
+        var yt: Int!
         if x > 0 && y > 0 && x < width && y < height{
-            xt = x.truncatingRemainder(dividingBy: width-1)
-            yt = y.truncatingRemainder(dividingBy: height-1)
+            xt = x
+            yt = y
         } else {
             return
         }
-        var pixelNumber = Int(xt + width * yt)
-        canvas[pixelNumber] = PixelData(r: color.r, g: color.g, b: color.b)
+        var pixelNumber = xt + width * yt
+        canvas[pixelNumber] = Color(color.r, color.g, color.b)
     }
     
-    // MARK: - UNDERSTANDING BRESERNHAM'S LINE ALGORITHM
+     
     
-    /**
-     Simple Line Function
-     
-     **Citation**
-     
-     **Title:** Graphics & Visualization: Principles & Algorithms
-     
-     **Author:** T. Theoharis, G. Papaioannou, N. Platis, N. Patrikalakis
-     
-     **Date:** 2008
-     
-     **Code version:** N/A
-     
-     **Availability:** http://graphics.cs.aueb.gr/cgvizbook/index.html
-     
-     - parameters:
-     - x1: Starting x position
-     - y1: Starting y position
-     - x2: Ending x position
-     - y2: Ending y position
-     */
-    
-    func line(_ x1: CGFloat, _ y1: CGFloat, _ x2:CGFloat, _ y2:CGFloat) {
-        var slope: CGFloat
-        var x,y: CGFloat
-        slope = (y2-y1) / (x2-x1)
+    func line(_ x1: Int,_ y1: Int,_ x2: Int,_ y2: Int) {
+        var dx = abs(x2-x1), sx:Int = x1<x2 ? 1 : -1
+        var dy = -abs(y2-y1), sy:Int = y1<y2 ? 1 : -1
+        var err = dx+dy,e2: Int
         
-        x = x1
-        y = y1
-        if x2 > x1 {
-            while x <= x2 {
-                pixel(x,y, stroke)
-                x = x + 1
-                y = y1 + round(slope * (x-x1))
-            }
-        } else if x2 < x1 {
-            while x >= x2 {
-                pixel(x,y, stroke)
-                x = x - 1
-                y = y1 + round(slope * (x-x1))
-            }
+        var x = x1
+        var y = y1
+        
+        while true {
+            pixel(x, y, stroke)
+            if (x == x2 && y == y2) { break }
+            e2 = 2 * err
+            if (e2 >= dy) { err += dy; x += sx }
+            if (e2 <= dx) { err += dx; y += sy }
         }
     }
-    
-    func line2(_ x1: CGFloat, _ y1: CGFloat, _ x2: CGFloat, _ y2: CGFloat) {
-        var s,e: CGFloat
-        var x,y: CGFloat
-        e = 0
-        s = (y2-y1) / (x2-x1)
-        (x,y) = (x1,y1)
-        while (x <= x2) {
-            pixel(x,y, stroke)
-            x = x + 1
-            e = e + s
-            if (e >= 1/2) {
-                y = y + 1
-                e = e - 1
-            }
-        }
-    }
-    
-    //    func bresenhamLine(_ x1: CGFloat, _ y1: CGFloat, _ x2: CGFloat, _ y2: CGFloat) {
-    //        var x,y,e,dx,dy: CGFloat
-    //        if dx == nil {
-    //            dx = 0
-    //        }
-    //        if dy == nil {
-    //            dy = 0
-    //        }
-    //        e = -(dx / 2)
-    //        dx = (x2-x1)
-    //        dy = (y2-y1)
-    //        (x,y) = (x1, y1)
-    //        while (x <= x2) {
-    //            pixel(CGFloat(x),CGFloat(y),stroke);
-    //            x = x + 1
-    //            e = e + dy
-    //            if (e >= 0) {
-    //                y = y + 1
-    //                e = e - dx
-    //            }
-    //        }
-    //    }
-    
-    
 }
 
 
