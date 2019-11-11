@@ -16,6 +16,7 @@
 		51DE163B2373AFE400D67FEF /* DrawHere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DE163A2373AFE400D67FEF /* DrawHere.swift */; };
 		51DE163D2373B31700D67FEF /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DE163C2373B31700D67FEF /* Utils.swift */; };
 		51E23450236F2516009E31EF /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E2344F236F2516009E31EF /* Color.swift */; };
+		51E6930A237A167D0063B151 /* MicInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E69309237A167D0063B151 /* MicInput.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		51DE163A2373AFE400D67FEF /* DrawHere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawHere.swift; sourceTree = "<group>"; };
 		51DE163C2373B31700D67FEF /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		51E2344F236F2516009E31EF /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		51E69309237A167D0063B151 /* MicInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicInput.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 				51BC2508236CD58000C44F39 /* DrawViewController.swift */,
 				51DE163C2373B31700D67FEF /* Utils.swift */,
 				51E2344F236F2516009E31EF /* Color.swift */,
+				51E69309237A167D0063B151 /* MicInput.swift */,
 			);
 			path = DrawDraw;
 			sourceTree = "<group>";
@@ -161,6 +164,7 @@
 				51BC2505236CD58000C44F39 /* AppDelegate.swift in Sources */,
 				51BC2507236CD58000C44F39 /* SceneDelegate.swift in Sources */,
 				51DE163D2373B31700D67FEF /* Utils.swift in Sources */,
+				51E6930A237A167D0063B151 /* MicInput.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -61,5 +61,7 @@
 	</array>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>DrawDraw would like to be able to save images to your library. To save a screen shot, tap with two fingers.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>DrawDraw can use input from your microphone to control generative art. These recordings are entirely private.</string>
 </dict>
 </plist>

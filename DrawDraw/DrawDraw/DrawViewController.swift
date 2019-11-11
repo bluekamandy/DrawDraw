@@ -81,6 +81,7 @@ class DrawViewController: UIViewController {
     var initialCenter: CGPoint!
     var touchX: Int = 0
     var touchY: Int = 0
+    var screenIsTouched: Bool = false
     
     // MARK: - LAUNCH ORDER
     
@@ -129,22 +130,25 @@ class DrawViewController: UIViewController {
     // MARK: - TOUCHES
     
     @IBAction func screenTapped(_ recognizer: UITapGestureRecognizer) {
-            viewDidLayoutSubviews()
+        viewDidLayoutSubviews()
     }
     
     
     @IBAction func screenTappedTwo(_ recognizer: UITapGestureRecognizer) {
         print("Writing image to libary")
-        guard let data = imageView.image?.pngData() else { return }
-        guard let image = UIImage(data: data) else { return }
-
+        guard let image = getScreenshot() else { return }
+        
         UIImageWriteToSavedPhotosAlbum(image, self, nil, nil)
-
-
+        
+        
     }
     
     @IBAction func handlePan(_ recognizer: UIPanGestureRecognizer) {
         guard pan.view != nil else {return}
+        
+        if pan.state == .began {
+            screenIsTouched = true
+        }
         
         if pan.state == .began || pan.state == .changed || pan.state == .ended {
             touchX = Int(
@@ -160,8 +164,35 @@ class DrawViewController: UIViewController {
                     view.frame.height,CGFloat(height) - CGFloat(width)*screenRatio,
                     CGFloat(height)))
             //            print("y is \(touchY)")
+            
+            
         }
         
+        if pan.state == .ended {
+            screenIsTouched = false
+        }
+
+        
+    }
+    
+    // MARK: - SCREENSHOT
+    // A function to save a high quality screen shot.
+    // Source: https://stackoverflow.com/questions/25448879/how-do-i-take-a-full-screen-screenshot-in-swift
+    
+    func getScreenshot() -> UIImage? {
+        //creates new image context with same size as view
+        // UIGraphicsBeginImageContextWithOptions (scale=0.0) for high res capture
+        UIGraphicsBeginImageContextWithOptions(view.frame.size, true, 0.0)
+        
+        // renders the view's layer into the current graphics context
+        if let context = UIGraphicsGetCurrentContext() { view.layer.render(in: context) }
+        
+        // creates UIImage from what was drawn into graphics context
+        let screenshot: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
+        
+        // clean up newly created context and return screenshot
+        UIGraphicsEndImageContext()
+        return screenshot
     }
     
     // MARK: - DISPLAY LINK

@@ -91,3 +91,60 @@ func random(_ min: CGFloat, _ max:CGFloat) -> CGFloat {
     var result = CGFloat.random(in: min...max)
     return result
 }
+
+// MARK: LERP FUNCTION
+
+/// This is a basic lerp function. Source: https://stackoverflow.com/questions/8316882/what-is-an-easing-function
+/// ```
+/// let randomNumber = random(50.0)
+/// ```
+/// - parameter start: start value (or noisy input)
+/// - parameter stop: stop value (or smoothed output)
+/// - parameter amount: amount interpolation from 0.0 to 1.0. Higher is less smooth. Lower is more smooth.
+
+func lerp(_ start: Int,_ stop: Int, _ amount: CGFloat) -> Int {
+    let fStart = CGFloat(start)
+    let fStop = CGFloat(stop)
+    return Int(round(fStart+(fStop-fStart)*amount))
+    
+}
+
+// MARK: CONSTRAIN FUNCTION WITH INTEGERS
+
+/// This is a basic constrain function. Inspired by the function of the same name in Processing.
+/// ```
+/// let constrainedNumber = constrain(touchX, 0, 100)
+/// ```
+/// - parameter amt: value to constrain
+/// - parameter low: lowest possible value
+/// - parameter high: highest possible value.
+
+func constrain(_ amt: Int, _ low: Int, _ high: Int) -> Int {
+    if amt < low {
+        return low
+    } else if amt > high {
+        return high
+    } else {
+        return amt
+    }
+}
+
+// MARK: CONSTRAIN FUNCTION WITH CGFLOAT
+
+/// This is a basic constrain function. Inspired by the function of the same name in Processing.
+/// ```
+/// let constrainedNumber = constrain(v, 0.0, 100.0)
+/// ```
+/// - parameter amt: value to constrain
+/// - parameter low: lowest possible value
+/// - parameter high: highest possible value.
+
+func constrain(_ amt: CGFloat, _ low: CGFloat, _ high: CGFloat) -> CGFloat {
+    if amt < low {
+        return low
+    } else if amt > high {
+        return high
+    } else {
+        return amt
+    }
+}
