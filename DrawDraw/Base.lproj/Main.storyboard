@@ -15,7 +15,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="2QL-oR-U85">
+                            <imageView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="2QL-oR-U85">
                                 <rect key="frame" x="0.0" y="44" width="414" height="808"/>
                                 <gestureRecognizers/>
                             </imageView>
@@ -32,6 +32,7 @@
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="DlG-gW-xa2" appends="YES" id="coz-tn-bSx"/>
                             <outletCollection property="gestureRecognizers" destination="plu-tC-uVG" appends="YES" id="qLZ-7g-LM7"/>
+                            <outletCollection property="gestureRecognizers" destination="nJJ-YQ-9Mp" appends="YES" id="1RE-e8-ZvC"/>
                         </connections>
                     </view>
                     <connections>
@@ -50,6 +51,11 @@
                         <action selector="handlePan:" destination="BYZ-38-t0r" id="nF5-rD-jE9"/>
                     </connections>
                 </panGestureRecognizer>
+                <tapGestureRecognizer numberOfTouchesRequired="2" id="nJJ-YQ-9Mp">
+                    <connections>
+                        <action selector="screenTappedTwo:" destination="BYZ-38-t0r" id="tag-eb-S9E"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="137.68115942028987" y="137.94642857142856"/>
         </scene>

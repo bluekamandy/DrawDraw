@@ -59,5 +59,7 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>DrawDraw would like to be able to save images to your library. To save a screen shot, tap with two fingers.</string>
 </dict>
 </plist>

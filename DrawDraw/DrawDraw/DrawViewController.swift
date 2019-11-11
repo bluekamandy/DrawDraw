@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreGraphics
+import CoreImage
 import QuartzCore
 
 class DrawViewController: UIViewController {
@@ -127,9 +128,19 @@ class DrawViewController: UIViewController {
     
     // MARK: - TOUCHES
     
-    @IBAction func screenTapped(_ sender: Any) {
-        viewDidLayoutSubviews()
-        //        print("tap")
+    @IBAction func screenTapped(_ recognizer: UITapGestureRecognizer) {
+            viewDidLayoutSubviews()
+    }
+    
+    
+    @IBAction func screenTappedTwo(_ recognizer: UITapGestureRecognizer) {
+        print("Writing image to libary")
+        guard let data = imageView.image?.pngData() else { return }
+        guard let image = UIImage(data: data) else { return }
+
+        UIImageWriteToSavedPhotosAlbum(image, self, nil, nil)
+
+
     }
     
     @IBAction func handlePan(_ recognizer: UIPanGestureRecognizer) {
