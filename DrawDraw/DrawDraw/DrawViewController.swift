@@ -301,7 +301,7 @@ class DrawViewController: UIViewController {
         canvas[pixelNumber] = stroke
     }
     
-    
+    // Adapted from:  https://web.archive.org/web/20120314012420/http://free.pages.at/easyfilter/bresenham.html
     
     func line(_ x1: Int,_ y1: Int,_ x2: Int,_ y2: Int) {
         var dx = abs(x2-x1), sx:Int = x1<x2 ? 1 : -1
@@ -318,6 +318,27 @@ class DrawViewController: UIViewController {
             if (e2 >= dy) { err += dy; x += sx }
             if (e2 <= dx) { err += dx; y += sy }
         }
+    }
+    
+    func circle(_ xm: Int, _ ym: Int, _ r: Int) {
+        var x = -r, y = 0, err = 2-2*r
+        var r_ = r
+        
+        repeat {
+            pixel(xm-x, ym+y)
+            pixel(xm-y, ym-x)
+            pixel(xm+x, ym-y)
+            pixel(xm+y, ym+x)
+            r_ = err
+            if r_ > x {
+                x += 1
+                err += x*2+1
+            }
+            if r_ <= y {
+                y += 1
+                err += y*2+1
+            }
+        } while x < 0
     }
 }
 

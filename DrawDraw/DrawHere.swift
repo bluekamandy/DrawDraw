@@ -20,7 +20,7 @@ class DrawHere : DrawViewController {
     
     var v: CGFloat! // Raw volume from mic
     var easev: CGFloat = 0.0 // For easing. Needs to start out at 0.0
-    var easing: CGFloat = 0.1 // The closer to 0 the smoother your animation. Closer to 1 the faster/harsher s the animation.
+    var easing: CGFloat = 0.05 // The closer to 0 the smoother your animation. Closer to 1 the faster/harsher s the animation.
     
     override func setup() {
         fullScreen()
@@ -32,26 +32,29 @@ class DrawHere : DrawViewController {
     }
     
     override func draw() {
+        
+        backgroundColor = Color(0,0,255)
         MicInput.shared.updateMeter()
         
-        v = map(MicInput.shared.myVolume, 25, 75, 0, 200)
+        v = map(MicInput.shared.myVolume, 25, 75, 0, 2000)
+        v = constrain(v, 0.0, 2000.0)
         easev += (v - easev) * easing // Easing Algorithm
         
-        v = constrain(v, 0.0, 200.0)
+        
         print(v)
-        var randomWhite:UInt8 = random(255)
-        stroke = Color(randomWhite)
-        largeRect(xPos, yPos, Int(round(v)))
         
-        if screenIsTouched {
-            xPos = lerp(xPos, touchX, 0.01)
-            yPos = lerp(yPos, touchY, 0.01)
-        }
+        stroke = Color(255)
+        //        largeRect(xPos, yPos, Int(round(v)))
+        //
+        //        if screenIsTouched {
+        //            xPos = lerp(xPos, touchX, 0.01)
+        //            yPos = lerp(yPos, touchY, 0.01)
+        //        }
+        //
+        //        xPos = xPos > width || xPos < 0 ? width / 2 : xPos + random(-5,5)
+        //        yPos = yPos > height || yPos < 0 ? height / 2 : yPos + random(-5,5)
         
-        xPos = xPos > width || xPos < 0 ? width / 2 : xPos + random(-5,5)
-        yPos = yPos > height || yPos < 0 ? height / 2 : yPos + random(-5,5)
-        
-        
+        circle(width/2, height/2, Int(round(easev)))
     }
     
     func largeRect(_ x: Int, _ y: Int, _ squareSize: Int){
