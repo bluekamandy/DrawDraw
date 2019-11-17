@@ -10,6 +10,7 @@ import UIKit
 import CoreGraphics
 import CoreImage
 import QuartzCore
+import simd
 
 class DrawViewController: UIViewController {
     
@@ -46,13 +47,6 @@ class DrawViewController: UIViewController {
         }
     }
     
-    //    public struct Color {
-    //        var a:UInt8 = 255
-    //        var r:UInt8
-    //        var g:UInt8
-    //        var b:UInt8
-    //    }
-    
     public struct Vector {
         var x: CGFloat
         var y: CGFloat
@@ -64,9 +58,18 @@ class DrawViewController: UIViewController {
     var maxWidth: Int!
     var maxHeight: Int!
     
+    var sketchStartTime: Int!
+    var startTimeRecorded = false
+    var frameCount: Int! = 0
+    
+    var displaylink: CADisplayLink!
     var screenRatio: CGFloat!
     var screenFrame: CGRect!
-    var frameRate: Int = 60
+    var frameRate: Int = 60 {
+        didSet {
+            changeFramerate(fps: frameRate)
+        }
+    }
     
     var canvas:[Color]!
     
@@ -81,6 +84,8 @@ class DrawViewController: UIViewController {
     var initialCenter: CGPoint!
     var touchX: Int = 0
     var touchY: Int = 0
+    var touchDX: Int = 0
+    var touchDY: Int = 0
     var screenIsTouched: Bool = false
     
     // MARK: - LAUNCH ORDER
@@ -111,10 +116,12 @@ class DrawViewController: UIViewController {
         
         screenRatio = CGFloat(maxHeight)/CGFloat(maxWidth)
         
+        frameRate = 60
+        
         setup()
         
         // Create Display Link
-        createDisplayLink(fps: frameRate)
+        //createDisplayLink(fps: frameRate)
     }
     
     // MARK: - BASIC SETUP AND DRAW
@@ -146,6 +153,12 @@ class DrawViewController: UIViewController {
     @IBAction func handlePan(_ recognizer: UIPanGestureRecognizer) {
         guard pan.view != nil else {return}
         
+        var translation = recognizer.translation(in: view)
+        recognizer.setTranslation(CGPoint.zero, in: view)
+        touchDX = Int(round(translation.x))
+        touchDY = Int(round(translation.y))
+        //print(translation)
+        
         if pan.state == .began {
             screenIsTouched = true
         }
@@ -171,7 +184,7 @@ class DrawViewController: UIViewController {
         if pan.state == .ended {
             screenIsTouched = false
         }
-
+        
         
     }
     
@@ -199,19 +212,40 @@ class DrawViewController: UIViewController {
     // Creating Link to Display for Refreshing 60 fps
     
     func createDisplayLink(fps: Int) {
-        let displaylink = CADisplayLink(target: self,
-                                        selector: #selector(step))
+        displaylink = CADisplayLink(target: self,
+                                    selector: #selector(step))
         
         displaylink.preferredFramesPerSecond = fps
         
         displaylink.add(to: .current,
                         forMode: .default)
+        
+        if startTimeRecorded == false {
+            sketchStartTime = Int(CACurrentMediaTime() * 1000)
+            startTimeRecorded = true
+        }
+    }
+    
+    func changeFramerate(fps: Int) {
+        if displaylink != nil {
+            displaylink.invalidate()
+        }
+        createDisplayLink(fps: fps)
     }
     
     @objc func step(displaylink: CADisplayLink) {
         imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: Int(width), height: Int(height))
+        frameCount += 1
         draw()
     }
+    
+    // MARK: - TIMER / FRAMECOUNT
+    // Functions to help us control animation
+    
+    func millis() -> Int {
+        return Int(CACurrentMediaTime() * 1000) - sketchStartTime
+    }
+    
     
     // MARK: - FRAMEWORK FUNCTIONS - BASIC SETUP FUNCTIONS
     
@@ -340,6 +374,121 @@ class DrawViewController: UIViewController {
             }
         } while x < 0
     }
+    
+    func filledRectangle(_ x: Int, _ y: Int, _ w: Int, _ h: Int){
+        
+        for yp in 0..<h {
+            for xp in 0..<w {
+                pixel(xp + x, yp + y)
+            }
+        }
+    }
+    
+    // MARK: - FRAMEWORK FUNCTIONS - TRANSFORMATIONS
+    
+    // The world's slowest translate function. Translate like it's 1985.
+    
+    func translate(_ dx: Int, _ dy: Int) {
+        
+        var buffer: [Color] = Array(repeating: Color(0), count: width * height)
+        
+        for i in 0..<canvas.count {
+            var color = canvas[i]
+            
+            // Backwards Modulus Info
+            // Source:  https://forum.processing.org/two/discussion/18714/pixel-number-to-x-y-coordinate
+            
+            var y = i / width
+            var x = i % width
+            
+            
+            y = abs((y + dy) % height)
+            x = abs((x + dx) % width)
+            
+            var pixelNumber = x + width * y
+            buffer[pixelNumber] = color
+        }
+        
+        canvas = buffer
+        
+    }
+    
+    func nonScalarTranslate(_ dx: Int, _ dy: Int) {
+        
+        var buffer: [Color] = Array(repeating: Color(0), count: width * height)
+        
+        for i in 0..<canvas.count {
+            var color = canvas[i]
+            
+            // Backwards Modulus Info
+            // Source:  https://forum.processing.org/two/discussion/18714/pixel-number-to-x-y-coordinate
+            
+            var y = i / width
+            var x = i % width
+            
+            
+            y = abs((y + dy) % height)
+            x = abs((x + dx) % width)
+            
+            let translationMatrix = makeTranslationMatrix(tx: Float(dx), ty: Float(dy))
+            let translatedVector = [Float(x),Float(y), 0] * translationMatrix
+            
+            var pixelNumber = Int(translatedVector.x) + width * Int(translatedVector.y)
+            buffer[pixelNumber] = color
+        }
+        
+        canvas = buffer
+        
+    }
+    
+    func makeTranslationMatrix(tx: Float, ty: Float) -> simd_float3x3 {
+        var matrix = matrix_identity_float3x3
+        
+        matrix[0, 2] = tx
+        matrix[1, 2] = ty
+        
+        return matrix
+    }
+    
+    func makeRotationMatrix(angle: Float) -> simd_float2x2 {
+        let rows = [
+            simd_float2( cos(angle), sin(angle)),
+            simd_float2(-sin(angle), cos(angle))
+        ]
+        
+        return float2x2(rows: rows)
+    }
+    
+    func rotate(_ angle: Float) {
+        
+        var buffer: [Color] = Array(repeating: Color(0), count: width * height)
+        
+        for i in 0..<canvas.count {
+            var color = canvas[i]
+            
+            var y = Float(i / width)
+            var x = Float(i % width)
+            
+            var vector: simd_float2 = [x, y]
+            var result = vector * makeRotationMatrix(angle: angle)
+            
+            if result.x < Float(width) &&
+                result.x > 0 &&
+                result.y < Float(height) &&
+                result.y > 0 {
+                var pixelNumber = Int(result.x) + width * Int(result.y)
+                buffer[pixelNumber] = color
+            }
+        }
+        
+        canvas = buffer
+        
+    }
+    
+    // MARK: - FRAMEWORK FUNCTIONS - SOUND
+    
+    //
+    
 }
 
 

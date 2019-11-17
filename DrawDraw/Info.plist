@@ -20,6 +20,10 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>DrawDraw can use input from your microphone to control generative art. These recordings are entirely private.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>DrawDraw would like to be able to save images to your library. To save a screen shot, tap with two fingers.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -54,14 +58,13 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>DrawDraw would like to be able to save images to your library. To save a screen shot, tap with two fingers.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>DrawDraw can use input from your microphone to control generative art. These recordings are entirely private.</string>
 </dict>
 </plist>

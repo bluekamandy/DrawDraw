@@ -12,59 +12,48 @@ import QuartzCore
 
 class DrawHere : DrawViewController {
     
-    var xPos: Int!
-    var yPos: Int!
+    var circleX: Int!
     
-    var randomIncrementX: Int!
-    var randomIncrementY: Int!
+    var translateX: Int!
+    var translateY: Int!
     
-    var v: CGFloat! // Raw volume from mic
-    var easev: CGFloat = 0.0 // For easing. Needs to start out at 0.0
-    var easing: CGFloat = 0.05 // The closer to 0 the smoother your animation. Closer to 1 the faster/harsher s the animation.
+    var circleR: UInt8!
+    var circleG: UInt8!
+    var circleB: UInt8!
     
     override func setup() {
         fullScreen()
+        //size(384,512)
+        //scalePixels()
         
-        backgroundColor = Color(0,0,255)
+        frameRate = 120
         
-        xPos = width/2
-        yPos = height/2
+        backgroundColor = Color(0)
+        
+        translateX = 0
+        translateY = 0
+        
+        circleX = 10
+        
+        circleB = 0
+        
     }
     
     override func draw() {
         
-        backgroundColor = Color(0,0,255)
-        MicInput.shared.updateMeter()
+        stroke = Color(0, 0, circleB)
         
-        v = map(MicInput.shared.myVolume, 25, 75, 0, 2000)
-        v = constrain(v, 0.0, 2000.0)
-        easev += (v - easev) * easing // Easing Algorithm
+        filledRectangle(width*2/3, height/3, 200, 200)
         
+        rotate(0.05)
         
-        print(v)
-        
-        stroke = Color(255)
-        //        largeRect(xPos, yPos, Int(round(v)))
-        //
-        //        if screenIsTouched {
-        //            xPos = lerp(xPos, touchX, 0.01)
-        //            yPos = lerp(yPos, touchY, 0.01)
-        //        }
-        //
-        //        xPos = xPos > width || xPos < 0 ? width / 2 : xPos + random(-5,5)
-        //        yPos = yPos > height || yPos < 0 ? height / 2 : yPos + random(-5,5)
-        
-        circle(width/2, height/2, Int(round(easev)))
+        circleB = (circleB + 10) % 245
     }
     
-    func largeRect(_ x: Int, _ y: Int, _ squareSize: Int){
-        
-        for yp in 0..<squareSize {
-            for xp in 0..<squareSize {
-                pixel(xp + x, yp + y)
-            }
-        }
-    }
+    
+    
+    
+    
 }
 
 
