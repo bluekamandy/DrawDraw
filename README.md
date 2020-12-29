@@ -1,0 +1,2 @@
+# DrawDraw
+A simple creative coding framework for iOS that enables beginner programmers to create generative art. Inspired by Processing, p5.js, and the needs of my Creative Coding students. Graphics are raster-based. Object-oriented programming knowledge is not necessary for beginners. This is also a project to systematically go through Graphics and Visualizations (2008): http://graphics.cs.aueb.gr/cgvizbook/index.html
