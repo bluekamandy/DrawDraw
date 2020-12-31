@@ -15,7 +15,7 @@ extension DrawViewController {
     func pixel(_ x: Int, _ y: Int) {
         var xt: Int!
         var yt: Int!
-        if x > 0 && y > 0 && x < width && y < height{
+        if x >= 0 && y >= 0 && x < width && y < height{
             xt = x
             yt = y
         } else {
