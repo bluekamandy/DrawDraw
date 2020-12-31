@@ -3,7 +3,7 @@
 //
 //
 //  Created by MASOOD KAMANDY on 10/22/19.
-//  Copyright © 2019 Masood Kamandy. All rights reserved.
+//  Copyright © 2021 Masood Kamandy. All rights reserved.
 //
 
 import Foundation
@@ -27,15 +27,20 @@ import CoreGraphics
 /// - parameter high2: The new high to output for the remapped range.
 /// - returns: A `Double` remapped to the new scale.
 
-func map(_ valueToModify: Double, _ low1: Double, _ high1: Double, _ low2: Double, _ high2: Double) -> Double {
+func map<T: FloatingPoint>(_ valueToModify: T,_ low1: T,_ high1: T,_ low2: T,_ high2: T) -> T {
     let result = (low2 + (valueToModify - low1)) * (high2 - low2) / (high1 - low1)
     return result
 }
 
-func map(_ valueToModify: CGFloat, _ low1: CGFloat, _ high1: CGFloat, _ low2: CGFloat, _ high2: CGFloat) -> CGFloat {
-    let result = (low2 + (valueToModify - low1)) * (high2 - low2) / (high1 - low1)
-    return result
-}
+//func map(_ valueToModify: Double, _ low1: Double, _ high1: Double, _ low2: Double, _ high2: Double) -> Double {
+//    let result = (low2 + (valueToModify - low1)) * (high2 - low2) / (high1 - low1)
+//    return result
+//}
+//
+//func map(_ valueToModify: CGFloat, _ low1: CGFloat, _ high1: CGFloat, _ low2: CGFloat, _ high2: CGFloat) -> CGFloat {
+//    let result = (low2 + (valueToModify - low1)) * (high2 - low2) / (high1 - low1)
+//    return result
+//}
 
 // MARK: RANDOM INTEGER FUNCTION
 

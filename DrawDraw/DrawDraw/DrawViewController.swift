@@ -3,7 +3,7 @@
 //  DrawDraw
 //
 //  Created by MASOOD KAMANDY on 11/1/19.
-//  Copyright © 2019 Masood Kamandy. All rights reserved.
+//  Copyright © 2021 Masood Kamandy. All rights reserved.
 //
 
 import UIKit
@@ -52,8 +52,8 @@ class DrawViewController: UIViewController {
         var y: CGFloat
     }
     
-    var width: Int = 500
-    var height: Int = 500
+    var width: Int = 0
+    var height: Int = 0
     
     var maxWidth: Int!
     var maxHeight: Int!
@@ -195,10 +195,15 @@ class DrawViewController: UIViewController {
     func getScreenshot() -> UIImage? {
         //creates new image context with same size as view
         // UIGraphicsBeginImageContextWithOptions (scale=0.0) for high res capture
-        UIGraphicsBeginImageContextWithOptions(view.frame.size, true, 0.0)
+        UIGraphicsBeginImageContextWithOptions(view.frame.size, false, imageView.contentScaleFactor)
+        
         
         // renders the view's layer into the current graphics context
-        if let context = UIGraphicsGetCurrentContext() { view.layer.render(in: context) }
+        if let context = UIGraphicsGetCurrentContext()
+        {
+            context.interpolationQuality = .none // Without this, images will be soft and interpolated at lower resolutions. No interpolation on screen grabs.
+            view.layer.render(in: context)
+        }
         
         // creates UIImage from what was drawn into graphics context
         let screenshot: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
@@ -278,9 +283,9 @@ class DrawViewController: UIViewController {
         for row in 0..<height {
             for column in 0..<width {
                 data.append(Color.init(
-                    UInt8.random(in: 0...255),
-                    UInt8.random(in: 0...255),
-                    UInt8.random(in: 0...255)))
+                                UInt8.random(in: 0...255),
+                                UInt8.random(in: 0...255),
+                                UInt8.random(in: 0...255)))
             }
         }
         
@@ -299,8 +304,8 @@ class DrawViewController: UIViewController {
         var data = pixels // Copy to mutable []
         guard let providerRef = CGDataProvider(data: NSData(bytes: &data,
                                                             length: data.count * MemoryLayout<Color>.size)
-            )
-            else { return nil }
+        )
+        else { return nil }
         
         guard let cgim = CGImage(
             width: width,
@@ -314,75 +319,13 @@ class DrawViewController: UIViewController {
             decode: nil,
             shouldInterpolate: false,
             intent: .defaultIntent
-            )
-            else { return nil }
+        )
+        else { return nil }
         
         return UIImage(cgImage: cgim)
     }
     
-    // MARK: - FRAMEWORK FUNCTIONS - SHAPE PRIMITIVES
     
-    func pixel(_ x: Int, _ y: Int) {
-        var xt: Int!
-        var yt: Int!
-        if x > 0 && y > 0 && x < width && y < height{
-            xt = x
-            yt = y
-        } else {
-            return
-        }
-        var pixelNumber = xt + width * yt
-        canvas[pixelNumber] = stroke
-    }
-    
-    // Adapted from:  https://web.archive.org/web/20120314012420/http://free.pages.at/easyfilter/bresenham.html
-    
-    func line(_ x1: Int,_ y1: Int,_ x2: Int,_ y2: Int) {
-        var dx = abs(x2-x1), sx:Int = x1<x2 ? 1 : -1
-        var dy = -abs(y2-y1), sy:Int = y1<y2 ? 1 : -1
-        var err = dx+dy,e2: Int
-        
-        var x = x1
-        var y = y1
-        
-        while true {
-            pixel(x, y)
-            if (x == x2 && y == y2) { break }
-            e2 = 2 * err
-            if (e2 >= dy) { err += dy; x += sx }
-            if (e2 <= dx) { err += dx; y += sy }
-        }
-    }
-    
-    func circle(_ xm: Int, _ ym: Int, _ r: Int) {
-        var x = -r, y = 0, err = 2-2*r
-        var r_ = r
-        
-        repeat {
-            pixel(xm-x, ym+y)
-            pixel(xm-y, ym-x)
-            pixel(xm+x, ym-y)
-            pixel(xm+y, ym+x)
-            r_ = err
-            if r_ > x {
-                x += 1
-                err += x*2+1
-            }
-            if r_ <= y {
-                y += 1
-                err += y*2+1
-            }
-        } while x < 0
-    }
-    
-    func filledRectangle(_ x: Int, _ y: Int, _ w: Int, _ h: Int){
-        
-        for yp in 0..<h {
-            for xp in 0..<w {
-                pixel(xp + x, yp + y)
-            }
-        }
-    }
     
     // MARK: - FRAMEWORK FUNCTIONS - TRANSFORMATIONS
     

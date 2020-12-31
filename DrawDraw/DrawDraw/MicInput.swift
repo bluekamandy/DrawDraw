@@ -1,3 +1,11 @@
+//
+//  MicInput.swift
+//  DrawDraw
+//
+//  Created by MASOOD KAMANDY on 11/3/19.
+//  Copyright © 2021 Masood Kamandy. All rights reserved.
+//
+
 import UIKit
 import AVFoundation
 

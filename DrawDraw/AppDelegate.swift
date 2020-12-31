@@ -3,7 +3,7 @@
 //  DrawDraw
 //
 //  Created by MASOOD KAMANDY on 11/1/19.
-//  Copyright © 2019 Masood Kamandy. All rights reserved.
+//  Copyright © 2021 Masood Kamandy. All rights reserved.
 //
 
 import UIKit

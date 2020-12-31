@@ -3,7 +3,7 @@
 //  DrawDraw
 //
 //  Created by MASOOD KAMANDY on 11/1/19.
-//  Copyright © 2019 Masood Kamandy. All rights reserved.
+//  Copyright © 2021 Masood Kamandy. All rights reserved.
 //
 
 import UIKit
@@ -22,9 +22,8 @@ class DrawHere : DrawViewController {
     var circleB: UInt8!
     
     override func setup() {
-        fullScreen()
-        //size(384,512)
-        //scalePixels()
+        size(120, 90)
+        scalePixels()
         
         frameRate = 120
         
@@ -41,13 +40,10 @@ class DrawHere : DrawViewController {
     
     override func draw() {
         
-        stroke = Color(0, 0, circleB)
+        stroke = Color(random(255), random(255), random(255))
         
-        filledRectangle(width*2/3, height/3, 200, 200)
+        pixel(random(width) , random(height))
         
-        rotate(0.05)
-        
-        circleB = (circleB + 10) % 245
     }
     
     
