@@ -12,43 +12,60 @@ import QuartzCore
 
 class DrawHere : DrawViewController {
     
-    var circleX: Int!
+    var numPoints: Int!
     
-    var translateX: Int!
-    var translateY: Int!
+    var colorCenter: Int!
     
-    var circleR: UInt8!
-    var circleG: UInt8!
-    var circleB: UInt8!
+    var points: [Vector]!
+    var colors: [Color]!
     
     override func setup() {
-        size(120, 90)
-        scalePixels()
+//        size(800, 600)
+//        scalePixels()
+        fullScreen()
         
-        frameRate = 120
+        //frameRate = 60
         
         backgroundColor = Color(0)
         
-        translateX = 0
-        translateY = 0
+        numPoints = 500
         
-        circleX = 10
+        points = []
+        colors = []
         
-        circleB = 0
+        for index in 0..<numPoints {
+            points.append(DrawViewController.Vector(x: CGFloat(random(width)), y: CGFloat(random(height))))
+            colors.append(Color(random(255), random(255), random(255)))
+            print(points[index])
+        }
         
+        for x in 0..<width {
+            for y in 0..<height {
+                var deltaArray: [CGFloat] = []
+                for p in points {
+                    deltaArray.append(distanceSquared(p.x, p.y, CGFloat(x), CGFloat(y)))
+                }
+                
+                var lowest: CGFloat = distanceSquared(0, 0, CGFloat(width), CGFloat(height))
+                var lowestIndex: Int = 0
+                for index in 0..<deltaArray.count {
+                    if deltaArray[index] < lowest {
+                        lowest = deltaArray[index]
+                        lowestIndex = index
+                    }
+                }
+                
+                stroke = colors[lowestIndex]
+                pixel(x, y)
+            }
+        }
+        print("Done")
     }
+    
     
     override func draw() {
-        
-        stroke = Color(random(255), random(255), random(255))
-        
-        pixel(random(width) , random(height))
-        
+    
     }
-    
-    
-    
-    
     
 }
 

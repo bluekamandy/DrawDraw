@@ -153,3 +153,22 @@ func constrain(_ amt: CGFloat, _ low: CGFloat, _ high: CGFloat) -> CGFloat {
         return amt
     }
 }
+
+// MARK: DISTANCE FORMULA
+
+/// This is a basic distance function a la Pythagoras.
+/// ```
+/// let distance = distance(0.0, 0.0, 100.0, 100.0)
+/// ```
+/// - parameter x1: first x value
+/// - parameter y1: first y value
+/// - parameter x2: second x value
+/// - parameter y2: second y value
+
+func distance(_ x1: CGFloat, _ y1: CGFloat, _ x2: CGFloat, _ y2: CGFloat) -> CGFloat {
+    return sqrt((x2 - x1)*(x2 - x1) + (y2-y1)*(y2-y1))
+}
+
+func distanceSquared(_ x1: CGFloat, _ y1: CGFloat, _ x2: CGFloat, _ y2: CGFloat) -> CGFloat {
+    return (x2 - x1)*(x2 - x1) + (y2-y1)*(y2-y1)
+}

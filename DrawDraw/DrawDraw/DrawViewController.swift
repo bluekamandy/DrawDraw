@@ -10,7 +10,8 @@ import UIKit
 import CoreGraphics
 import CoreImage
 import QuartzCore
-import simd
+import MetalKit
+import Metal
 
 class DrawViewController: UIViewController {
     
@@ -145,10 +146,19 @@ class DrawViewController: UIViewController {
         print("Writing image to libary")
         guard let image = getScreenshot() else { return }
         
-        UIImageWriteToSavedPhotosAlbum(image, self, nil, nil)
+        UIImageWriteToSavedPhotosAlbum(pngFrom(image: image), self, nil, nil)
         
-        
+        // Having trouble with compression level. Would like to save a PNG. Not sure how to do that.
     }
+    
+    // Just testing out: https://stackoverflow.com/questions/1489250/uiimagewritetosavedphotosalbum-save-as-png-with-transparency
+    
+    func pngFrom(image: UIImage) -> UIImage {
+        let imageData = image.pngData()!
+        let imagePng = UIImage(data: imageData)!
+        return imagePng
+    }
+    
     
     @IBAction func handlePan(_ recognizer: UIPanGestureRecognizer) {
         guard pan.view != nil else {return}
@@ -237,6 +247,16 @@ class DrawViewController: UIViewController {
         }
         createDisplayLink(fps: fps)
     }
+    
+    // THis works but it's slow
+    
+    //    @objc func step(displaylink: CADisplayLink) {
+    //        imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: Int(width), height: Int(height))
+    //        frameCount += 1
+    //        draw()
+    //    }
+    
+    // Trying out Metal
     
     @objc func step(displaylink: CADisplayLink) {
         imageView.image = imageFromARGB32Bitmap(pixels: canvas, width: Int(width), height: Int(height))
